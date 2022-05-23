@@ -125,7 +125,7 @@ getProjectSummary <- function(dam){
 }
 
 getCounts <- function(year,dam){
-  url <- paste("http://www.cbr.washington.edu/dart/cs/php/rpt/adult_daily.php?sc=1&outputFormat=csv&year=",year,"&proj=",dam,"&span=no&startdate=1%2F1&enddate=12%2F31&run=&syear=",year,"&eyear=",year,"&avg=1",sep="")
+url <- paste("https://www.cbr.washington.edu/dart/cs/php/rpt/adult_daily.php?sc=1&outputFormat=csv&year=",year,"&proj=",dam,"&span=no&startdate=1%2F1&enddate=12%2F31&run=&syear=",year,"&eyear=",year,"&avg=1&cum=1",sep="")
   counts <- read.csv(url) %>% filter(Date != "")
   suppressWarnings(counts$Date <- ymd(counts$Date))
   counts <- counts %>% filter(!is.na(Date))
@@ -133,10 +133,8 @@ getCounts <- function(year,dam){
   n <- names(counts)
   counts <- counts %>% select(1,5,7,9,11,13,15,17,19,21,23,25,27)
   counts[is.na(counts)] <- 0
-  for(i in 2:11){
-    counts[,i] <- cumsum(counts[,i])
-  }
   print(dam)
+  print(url)
   return(counts)
 }
 
@@ -145,7 +143,7 @@ getAllMeans <- function(){
   means <- data.frame()
   for(i in 1:length(dams)){
   #for(i in 1:2){
-    mean <- getCounts(2019,dams[i])
+    mean <- getCounts(2022,dams[i])
     means <- rbind(means,mean)
   }
   names(means) <- c("Project","Chinook","Jack.Chinook","Steelhead","Wild.Steelhead","Sockeye","Coho","Jack.Coho","Shad","Lamprey","Bull.Trout","Pink","day")
